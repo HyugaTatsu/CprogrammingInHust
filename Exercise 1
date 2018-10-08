@@ -1,0 +1,25 @@
+#include <stdio.h>
+#include <math.h>
+int convertTimeToSec(char c[]);
+int main() {
+    char input;
+    scanf("%c", &input);
+    printf("'%c': %d", input, (int)input);
+
+    int num;
+    scanf("%d", &num);
+    char str[100];
+    gets(str);
+    printf("%d and%s", num, str);
+
+    char time1[9], time2[9];
+    scanf("%s%s", time1, time2);
+    printf("The distance between two times is: %d secs", convertTimeToSec(time2) - convertTimeToSec(time1));
+}
+
+int convertTimeToSec(char t[9])
+{
+    return ((t[0] - '0') * 10 + (t[1] - '0')) * 3600
+        + ((t[3] - '0') * 10 + (t[4] - '0')) * 60
+        + (t[6] - '0') * 10 + (t[7] - '0');
+}
