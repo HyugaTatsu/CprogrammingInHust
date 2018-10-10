@@ -1,0 +1,15 @@
+#include <stdio.h>
+int main()
+{
+    int qty = 5;
+    char ISBN[14] = "98-6996-12";
+    char title[100] = "Naoko";
+    float price = 100.69;
+    float total = qty * price;
+    float VAT = (float)4/100;
+    printf("Qty%*cISBN%*cTitle%*cPrice%*cTotal\n", 6, ' ', 10, ' ', 21, ' ', 18, ' ');
+    printf("-----------------------------------------------------------------------------\n");
+    printf("%-9d%-14.13s%-26.25s%-9.2f%19.2f\n", qty, ISBN, title, price, total);
+    printf("VAT: %72.2f\t\n", VAT);
+    printf("You pay: %68.2f", total * (1 + VAT));
+}
