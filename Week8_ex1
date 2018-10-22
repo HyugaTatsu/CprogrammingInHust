@@ -54,6 +54,14 @@ int main()
         }
     }
     
+    //ex 4-1
+    float numA, numB, x;
+    printf("Insert values for a and b: ");
+    scanf("%f%f", &numA, &numB);
+    if (numA < numB) x = (numA + numB) / 3 + numB;
+    else if (numA > numB) x = (numA - numB) / (numA * numA + numB * numB);
+    else x = 15.172;
+    printf("The value y = 15x^2 + x + 12 is: %.3f", 15 * x * x + x + 12);
     
     //ex 4-2
     int number;
