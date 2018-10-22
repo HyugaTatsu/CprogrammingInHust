@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <math.h> // for ex 3
 int main()
 {
     int month;
@@ -22,4 +23,34 @@ int main()
     int maxN = (num1 > num2) ? num1 : num2;
     maxN = (maxN > num3) ? maxN : num3;
     printf("Maximum of 3 numbers is: %d", maxN);
+    
+    // ex3
+    float a, b, c;
+    printf("Insert a, b and c: ");
+    scanf("%f%f%f", &a, &b, &c);
+    if (a == 0)
+    {
+        if (b == 0)
+        {
+            if (c == 0) printf("The equation has infinity solutions");
+            else printf("The equation has no solutions");
+        }
+        else
+        {
+            printf("The equation has a solution is: %.3f", -c/b);
+        }
+    }
+    else
+    {
+        float delta = b*b - 4*a*c;
+        if (delta < 0) printf("The equation has no solutions");
+        else if (delta == 0)
+        {
+            printf("The equation has a solution is: %.3f", -b/(2 * a));
+        }
+        else
+        {
+            printf("The equation has two solutions, which are: %.3f and %.3f", (-b + sqrt(delta))/(2*a), (-b - sqrt(delta))/(2*a));
+        }
+    }
 }
