@@ -1,0 +1,253 @@
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+#include <stdlib.h>
+typedef struct
+{
+    unsigned int ClassID = 0;
+    char CourseName[31];
+    char Room[11];
+    int Day;
+    char Slots[11];
+    unsigned int startT = 0, endT = 0;
+} classList;
+
+void printMenu();
+int number_exist_class(classList a[]);
+int slotsValidation(classList *a);
+void swapClass(classList *c1, classList * c2);
+void addClass(classList a[]);
+void printClassList(classList a[]);
+void printSameRoom(classList a[]);
+void arrangeClass(classList a[]);
+void checkDuplicateRoom(classList a[]);
+
+int main()
+{
+    classList cla[200];
+    printMenu();
+    printf("Please insert your choice 1-6: ");
+    while (1)
+    {
+        int n; scanf("%d", &n);
+        switch (n)
+        {
+        case 1:
+            addClass(cla);
+            break;
+        case 2:
+            printClassList(cla);
+            break;
+        case 3:
+            printSameRoom(cla);
+            break;
+        case 4:
+            arrangeClass(cla);
+            break;
+        case 5:
+            checkDuplicateRoom(cla);
+            break;
+        case 6:
+            printf("\n----------Goodbye----------");
+            return 0;
+        default:
+            printf("Your choice does not exist. Please insert another choice\n");
+            break;
+        }
+        printMenu();
+        printf("Please insert your choice: ");
+    }
+}
+
+void printMenu()
+{
+    printf("\n----------Menu----------\n");
+    printf("1. Add Classes\n");
+    printf("2. Print Classes Information\n");
+    printf("3. Search Classes By Room\n");
+    printf("4. Arrange Classes\n");
+    printf("5. Check Duplicate Room\n");
+    printf("6. Exit\n");
+    printf("------------------------\n");
+}
+
+int number_exist_class(classList a[])
+{
+    int count = 0;
+    for (int i = 0; i < 200; i++)
+    {
+        if (a[i].ClassID == 0) return count;
+        count++;
+    }
+}
+
+void addClass(classList a[])
+{
+    int n, sizeL = number_exist_class(a);
+    printf("Insert the number of classes that needed to add: \n");
+    do
+    {
+        scanf("%d", &n);
+        if (n + sizeL > 200 || n < 0) printf("\nThe number you insert is invalid, need to be less than %d and bigger than 0. Please insert again: ", 200 - sizeL + 1);
+    } while (n + sizeL > 200 || n < 0);
+    for (int i = 0; i < n; i++)
+    {
+        int flag = sizeL + i;
+        printf("\nInsert the Class ID: "); scanf("%u", &a[flag].ClassID);
+        printf("\nInsert the Course number: ");
+        fflush(stdin);
+        gets(a[flag].CourseName);
+        printf("\nInsert the Room number: ");
+        fflush(stdin);
+        gets(a[flag].Room);
+        printf("\nInsert the day from 2 to 7: ");
+        do
+        {
+            scanf("%d", &a[flag].Day);
+            if (a[flag].Day < 2 || a[flag].Day > 7) printf("The day is invalid. Please insert again: ");
+        } while (a[flag].Day < 2 || a[flag].Day > 7);
+        printf("\nInsert the slots: ");
+        do
+        {
+            fflush(stdin);
+            gets(a[flag].Slots);
+            if (slotsValidation(&a[flag]) == 0) printf("The slot is invalid. Please insert the slot with the type [1-11][2-12]: ");
+        } while (slotsValidation(&a[flag]) == 0);
+    }
+}
+
+int slotsValidation(classList *a)
+{
+    int len = strlen(a->Slots);
+    int temp1 = -1;
+    for (int i = 0; i < len; i++)
+    {
+        if (a->Slots[i] == '-')
+        {
+            if (i == 0) return 0;
+            temp1 = i; break;
+        }
+        else if (!isdigit(a->Slots[i])) return 0;
+    }
+    if (temp1 == -1) return 0;
+    for (int i = len - 1; i >= 0; i--)
+    {
+        if (a->Slots[i] == '-')
+        {
+            if (i == temp1) break;
+            else return 0;
+        }
+        else if (!isdigit(a->Slots[i])) return 0;
+    }
+    char num1[temp1 + 1];
+    strncpy(num1, a->Slots, temp1);
+    char num2[len - temp1];
+    for (int i = temp1 + 1; i < len; i++)
+    {
+        num2[i - temp1 - 1] = a->Slots[i];
+    }
+    int n1 = atoi(num1);
+    int n2 = atoi(num2);
+    if (n1 >= 1 && n1 <= 11 && n2 >= 2 && n2 <= 12 && n1 < n2)
+    {
+        a->startT = n1;
+        a->endT = n2;
+        return 1;
+    }
+    return 0;
+}
+
+void printClassList(classList a[])
+{
+    printf("Ma lop   Ten mon hoc          Ten phong     Thu    Tiet hoc\n");
+    int sizeL = number_exist_class(a);
+    for (int i = 0; i < sizeL; i++)
+    {
+        printf("%-9d%-21s%-14s%-7d%s\n", a[i].ClassID, a[i].CourseName, a[i].Room, a[i].Day, a[i].Slots);
+    }
+}
+
+void printSameRoom(classList a[])
+{
+    int sizeL = number_exist_class(a), count = 0;
+    char roomN[11];
+    printf("\nPlease insert the room you want to search for: ");
+    fflush(stdin);
+    gets(roomN);
+    for (int i = 0; i < sizeL; i++)
+    {
+        if (strcmp(a[i].Room, roomN) == 0)
+        {
+            count++;
+            printf("\n%d", a[i].ClassID);
+        }
+    }
+    if (count == 0) printf("\nThere is no match found\n");
+}
+
+void swapClass(classList *c1, classList *c2)
+{
+    classList temp = *c1;
+    *c1 = *c2;
+    *c2 = temp;
+}
+
+void arrangeClass(classList a[])
+{
+    int sizeL = number_exist_class(a);
+    classList b[200];
+    for (int i = 0; i < sizeL; i++)
+    {
+        b[i] = a[i];
+    }
+    for (int i = 0; i < sizeL; i++)
+    {
+        for (int j = i + 1; j < sizeL; j++)
+        {
+            if (b[i].ClassID > b[j].ClassID)
+            {
+                swapClass(&b[i], &b[j]);
+            }
+        }
+    }
+    printClassList(b);
+}
+
+void checkDuplicateRoom(classList a[])
+{
+    int sizeL = number_exist_class(a);
+    if (sizeL != 0)
+    {
+        int checkArr[sizeL]{0};
+        bool checkDup = false;
+        for (int i = 0; i < sizeL; i++)
+        {
+            for (int j = i + 1; j < sizeL; j++)
+            {
+                if (a[i].Day == a[j].Day && strcmp(a[i].Room, a[j].Room) == 0)
+                {
+                    int n1 = a[i].startT;
+                    int n2 = a[i].endT;
+                    int m1 = a[j].startT;
+                    int m2 = a[j].endT;
+                    if (n1 >= m1 && n1 <= m2 || m1 >= n1 && m1 <= n2)
+                    {
+                        checkDup = true;
+                        if (checkArr[i] == 0)
+                        {
+                            checkArr[i]++;
+                            printf("%d\n", a[i].ClassID);
+                        }
+                        if (checkArr[j] == 0)
+                        {
+                            checkArr[i]++;
+                            printf("%d\n", a[j].ClassID);
+                        }
+                    }
+                }
+            }
+        }
+        if (checkDup == false)  printf("\nThere is no duplicate classes\n");
+    }
+    else printf("\nThere is no classes yet.\n");
+}
