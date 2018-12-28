@@ -111,7 +111,7 @@ void addClass(classList a[])
         {
             fflush(stdin);
             gets(a[flag].Slots);
-            if (slotsValidation(&a[flag]) == 0) printf("The slot is invalid. Please insert the slot with the type [1-11][2-12]: ");
+            if (slotsValidation(&a[flag]) == 0) printf("The slot is invalid. Please insert the slot with the type [1-11]-[2-12]: ");
         } while (slotsValidation(&a[flag]) == 0);
     }
 }
@@ -119,6 +119,7 @@ void addClass(classList a[])
 int slotsValidation(classList *a)
 {
     int len = strlen(a->Slots);
+    if (len > 5) return 0;
     int temp1 = -1;
     for (int i = 0; i < len; i++)
     {
