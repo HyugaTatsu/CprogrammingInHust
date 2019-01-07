@@ -1,0 +1,241 @@
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+#define MAX_PRODUCT 10
+#define MAX_TRANS 50
+typedef struct
+{
+    char productName[30];
+    int quantity = 0;
+    double price = 0;
+} Product;
+Product productList[MAX_PRODUCT];
+
+typedef struct
+{
+    int productId;
+    int quantity;
+    double total;
+} TransactionDetail;
+TransactionDetail transList[MAX_TRANS];
+
+void menu();
+int numberOfExistProduct(Product a[]);
+void insertData(Product a[]);
+void addData(Product a[]);
+void viewData(Product a[]);
+void searchDataByproductName(Product a[]);
+void sellProduct(TransactionDetail a[], Product b[]);
+
+int main()
+{
+    menu();
+    int n;
+    printf("\nInsert your choice: ");
+    while (1)
+    {
+        scanf("%d", &n);
+        switch(n)
+        {
+        case 1:
+            insertData(productList);
+            break;
+        case 2:
+            addData(productList);
+            break;
+        case 3:
+            viewData(productList);
+            break;
+        case 4:
+            searchDataByproductName(productList);
+            break;
+        case 5:
+            sellProduct(transList, productList);
+            break;
+        case 6:
+            printf("\nIt's time to say good bye.\n");
+            return 0;
+        default:
+            printf("\nYour choice must be between 1 - 6.\n");
+            break;
+        }
+        menu();
+        printf("\nInsert your choice: ");
+    }
+}
+
+void menu()
+{
+    printf("\n__________Menu__________\n");
+    printf("1. Insert product\n");
+    printf("2. Add product\n");
+    printf("3. View product list\n");
+    printf("4. Search product by name\n");
+    printf("5. Sell product\n");
+    printf("6. Exit\n");
+}
+
+int numberOfExistProduct(Product a[])
+{
+    int count = 0;
+    for (int i = 0; i < MAX_PRODUCT; i++)
+    {
+        if (a[i].price == 0) return count;
+        count++;
+    }
+    return count;
+}
+
+void insertData(Product a[])
+{
+    printf("\nInsert the number of products: ");
+    int n;
+    do
+    {
+        scanf("%d", &n);
+        if (n < 1 || n > MAX_PRODUCT) printf("\nThe input is invalid. Please insert data in (1,%d): ", MAX_PRODUCT);
+    } while (n < 1 || n > MAX_PRODUCT);
+    for (int i = 0; i < n; i++)
+    {
+        fflush(stdin);
+        printf("\nInsert the product name: ");
+        gets(a[i].productName);
+        printf("\nInsert the quantity: ");
+        do
+        {
+            scanf("%d", &a[i].quantity);
+            if (a[i].quantity < 0) printf("\nThe quantity is invalid. Please insert quantity >= 0: ");
+        } while (a[i].quantity < 0);
+        printf("\nInsert the price: ");
+        do
+        {
+            scanf("%lf", &a[i].price);
+            if (a[i].price < 1) printf("\nThe price must be bigger than 0. Please insert the price again: ");
+        } while (a[i].price < 1);
+    }
+}
+
+void addData(Product a[])
+{
+    int size = numberOfExistProduct(a);
+    do
+    {
+        if (size < MAX_PRODUCT)
+        {
+            printf("\nPlease insert data for new product:\n");
+            printf("\nInsert the product name: ");
+            fflush(stdin);
+            gets(a[size].productName);
+            printf("\nInsert the quantity: ");
+            do
+            {
+                scanf("%d", &a[size].quantity);
+                if (a[size].quantity < 0) printf("\nThe quantity is invalid. Please insert quantity >= 0: ");
+            } while (a[size].quantity < 0);
+            printf("\nInsert the price: ");
+            do
+            {
+                scanf("%lf", &a[size].price);
+                if (a[size].price < 1) printf("\nThe price must be bigger than 0. Please insert the price again: ");
+            } while (a[size].price < 1);
+            size++;
+            if (size != MAX_PRODUCT)
+            {
+                printf("\nDo you want to insert one more product(Y/N):\n");
+                char c;
+                do
+                {
+                    fflush(stdin);
+                    c = getchar();
+                    if (c != 'Y' && c != 'N') printf("\nPlease choose again(Y/N): ");
+                } while (c != 'Y' && c != 'N');
+                if (c == 'N') break;
+            }
+        }
+        // not else because size has increased in the first 'if'
+        if (size >= MAX_PRODUCT)
+        {
+            printf("\nThe shop is full of products. Can not add more products.\n");
+        }
+    } while (size < MAX_PRODUCT);
+}
+
+void viewData(Product a[])
+{
+    int size = numberOfExistProduct(a);
+    if (size > 0)
+    {
+        printf("#\tProduct Name                  Price          Qty\n");
+        for (int i = 0; i < size; i++)
+        {
+            printf("%d\t%-30s%-15.1f%d\n", i, a[i].productName, a[i].price, a[i].quantity);
+        }
+    }
+    else printf("\nThere is no products yet.\n");
+}
+
+void searchDataByproductName(Product a[])
+{
+    int size = numberOfExistProduct(a);
+    char s[30];
+    printf("Insert the name of product you want to search: ");
+    fflush(stdin);
+    gets(s);
+    int ln = strlen(s), flag = 0;
+    for (int i = 0; i < size; i++)
+    {
+        int ln1 = strlen(a[i].productName);
+        if (ln1 == ln)
+        {
+            int flag1 = 1;
+            for (int j = 0; j < ln; j++)
+            {
+                if (tolower(s[j]) != tolower(a[i].productName[j]))
+                {
+                    flag1 = 0;
+                    break;
+                }
+            }
+            if (flag1 == 1)
+            {
+                printf("%-30s%-15.1f%d\n",a[i].productName, a[i].price, a[i].quantity);
+                flag++;
+            }
+        }
+    }
+    if (flag == 0)
+    {
+        printf("\nNo results found.\n");
+    }
+    else
+    {
+        printf("\n%d results found.\n", flag);
+    }
+}
+
+void sellProduct(TransactionDetail a[], Product b[])
+{
+    viewData(b);
+    int size = numberOfExistProduct(b);
+    if (size > 0)
+    {
+        for (int i = 0; i < size; i++)
+        {
+            printf("\nInsert the id of product you want to buy: ");
+            do
+            {
+                scanf("%d", &a[i].productId);
+                if (a[i].productId > size - 1 || a[i].productId < 0) printf("\nThe id is invalid. Please insert the id (0-%d) again: ", size - 1);
+            } while (a[i].productId > size - 1 || a[i].productId < 0);
+            printf("\nInsert the quantity of product you want to buy: ");
+            scanf("%d", &a[i].quantity);
+            if (a[i].quantity < 0 || a[i].quantity > b[a[i].productId].quantity) printf("\nThe quantity is invalid. You can't buy this product\n");
+            else
+            {
+                a[i].total = b[a[i].productId].price * a[i].quantity;
+                b[a[i].productId].quantity -= a[i].quantity;
+                printf("\nYour total funds to pay is: %.1f\n", a[i].total);
+            }
+        }
+    }
+}
