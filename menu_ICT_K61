@@ -1,0 +1,210 @@
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+#include <stdlib.h>
+
+typedef struct{
+	unsigned id;
+	char courseName[30];
+	char room[10];
+	int day;
+	char slots[10];
+	unsigned start;
+	unsigned end; 
+}Class;
+void inMenu(){
+	printf("_______MENU______________________\n");
+	printf("1. Bo sung lop hoc\n");
+	printf("2. In thong tin cac lop hoc\n");
+	printf("3. Tim kiem theo phong\n");
+	printf("4. Sap xep\n");
+	printf("5. Kiem tra trung phong\n");
+	printf("6. Thoat\n");
+	printf("_________________________________\n");
+}
+void tachXau(char str[], Class *p){      ///////////tach xau co dau '-'
+	int l1=0,l2=0;
+	char str1[10],str2[10];
+	int cursor = 0;
+		while(str[cursor]!='-'){
+			str1[l1]=str[cursor];
+			l1++;
+			cursor++;
+		}
+		cursor = l1+1;
+		while(cursor<=strlen(str)){
+			str2[l2]=str[cursor];
+			l2++;
+			cursor++;
+		}
+		printf("%s\n",str1);
+		printf("%s\n",str2);
+		p->start=atoi(str1);
+		p->end=atoi(str2);
+		printf("%d-%d\n",p->start,p->end);
+}
+int checkTrung(Class p,Class q){
+	int check = 1;
+	int s1,e1,s2,e2;
+	if(p.start>q.start) {
+		s1 = q.start;
+		s2 = p.start;
+	}
+	else {
+		s1 = p.start;
+		s2 = q.start;
+	}
+	if(p.end>q.end) {
+		e1 = p.end;
+		e2 = q.end;
+	}
+	else {
+		e1 = q.end;
+		e2 = p.end;
+	}
+	for(int i = s1;i<e1;i++){
+		if(i>e2&&i<s2) check = 0;
+	}
+	return check;
+}
+
+Class Nhap(){
+	Class temp;
+	printf("Nhap ID lop hoc : ");
+	scanf("%d",&temp.id);
+	// printf("Nhap vao ten hoc phan : ");
+	// fflush(stdin);
+	// gets(temp.courseName);
+	printf("Nhap vao so phong : ");
+	fflush(stdin);
+	gets(temp.room);
+	printf("Nhap vao ngay hoc trong tuan : ");
+	scanf("%d",&temp.day);
+	while(temp.day<2||temp.day>7){
+		printf("INVALID DAY, PLEASE RE-INPUT : ");
+		scanf("%d",&temp.day);
+	}
+	printf("Nhap vao tiet hoc theo dang TIETBATDAU-TIETKETTHUC : ");
+	fflush(stdin);
+	gets(temp.slots);
+	if(isdigit(temp.slots[0]!=0)||strlen(temp.slots)>5) {
+			printf("INVALID SLOTS, PLEASE RE-INPUT : ");
+			fflush(stdin);
+			gets(temp.slots);
+		}
+	int check = 0;
+	while(check==0){
+		tachXau(temp.slots,&temp);
+		while(temp.start>temp.end||temp.start<1||temp.start>12||temp.end<1||temp.end>12){
+			printf("INVALID SLOTS, PLEASE RE-INPUT : ");
+			fflush(stdin);
+			gets(temp.slots);
+			tachXau(temp.slots,&temp);
+		}
+		check = 1;
+	}
+	return temp;
+}
+void InDS(Class temp){
+	printf("%-9d%-21s%-14s%-7d%s\n",temp.id, temp.courseName, temp.room, temp.day, temp.slots);
+}
+void swap(Class *p1,Class *p2){
+	Class temp = *p1;
+	*p1=*p2;
+	*p2=temp;
+}
+
+int main(){
+	unsigned n;
+	unsigned totalCourses = 0;
+	int temp;
+	Class list[200];
+	inMenu();
+	do{
+		printf("Nhap vao lua chon : ");
+		scanf("%d",&n);
+		int j = totalCourses;
+		char tempRoom[10];
+		int count = 0;
+		switch (n){
+			case 1: printf("Nhap vao so lop can them : ");
+					scanf("%d",&temp);
+					while(temp<1){                             //truong hop temp nhap ki tu, %d gia tri la -1
+						printf("INVALID, PLEASE RE-INPUT : ");
+						fflush(stdin);
+						scanf("%d",&temp);
+					}
+					totalCourses+=temp;
+					while(totalCourses > 200){
+						printf("INVALID NUMBER OF COURSES, EXCEEDED	200, PLEASE RE-INPUT : ");
+						totalCourses-=temp;
+						scanf("%d",&temp);
+						totalCourses+=temp;
+					}
+					for (j;j<totalCourses;j++){ 	
+						list[j]=Nhap();
+					}
+					printf("_________________________________\n");
+					break;
+			case 2: printf("Ma lop | Ten mon hoc        | Ten phong   | Thu  | Tiet hoc\n");
+					for (int i =0;i<totalCourses;i++){
+						InDS(list[i]);
+					}
+					printf("_________________________________\n");
+					break;
+			case 3: printf("Nhap vao ten phong can tim : ");
+					count = 0; 
+					fflush(stdin);
+					gets(tempRoom);
+					for (int i =0;i<totalCourses;i++){
+						if(strcmp(tempRoom,list[i].room)==0){
+							count++;
+						}
+					}
+					printf("Ket qua : \n");
+					printf("So lop hoc : %d\n",count);
+					printf("Thong tin cac lop hoc : \n");
+					for(int i =0;i<totalCourses;i++){
+						if(strcmp(tempRoom,list[i].room)==0){
+							InDS(list[i]);
+						}
+					}
+					printf("_________________________________\n");
+					break;
+			case 4: printf("Sap xep ma lop theo thu tu tang dan : \n");
+					printf("Ma lop | Ten mon hoc        | Ten phong   | Thu  | Tiet hoc\n");
+					for(int i =0; i <totalCourses-1;i++){
+						for (int k = 0;k<totalCourses-1-i;k++){
+							if(list[k].id>list[k+1].id){
+								swap(&list[k],&list[k+1]);
+							}
+						}
+					}
+					for (int i = 0;i<totalCourses;i++){
+						InDS(list[i]); 
+					}
+					printf("_________________________________\n");
+					break;
+			case 5: printf("Kiem tra trung phong : \n");
+					int check = 0;
+					for (int i =0;i<totalCourses;i++){
+						for(int j = i+1;j<totalCourses;j++){
+							if(strcmp(list[i].room,list[j].room)==0&&list[i].day==list[j].day
+								&&checkTrung(list[i],list[j])==1){
+								printf("%d  &  %d\n",list[i].id,list[j].id);
+								check = 1;
+							}
+						}
+					}
+					if(check = 0) printf("Khong co lop trung.\n");
+					printf("_________________________________\n");
+					break;
+			case 6: printf("Quitting\n");
+					printf("_________________________________\n");
+					break;
+			default : printf("INVALID, PLEASE RE-INPUT : ");
+					break;
+
+		}
+	}while(n!=6);
+}
