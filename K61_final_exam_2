@@ -110,8 +110,8 @@ void insertData(Product a[])
         do
         {
             scanf("%lf", &a[i].price);
-            if (a[i].price < 1) printf("\nThe price must be bigger than 0. Please insert the price again: ");
-        } while (a[i].price < 1);
+            if (a[i].price <= 0) printf("\nThe price must be bigger than 0. Please insert the price again: ");
+        } while (a[i].price <= 0);
     }
 }
 
@@ -136,8 +136,8 @@ void addData(Product a[])
             do
             {
                 scanf("%lf", &a[size].price);
-                if (a[size].price < 1) printf("\nThe price must be bigger than 0. Please insert the price again: ");
-            } while (a[size].price < 1);
+                if (a[size].price <= 0) printf("\nThe price must be bigger than 0. Please insert the price again: ");
+            } while (a[size].price <= 0);
             size++;
             if (size != MAX_PRODUCT)
             {
